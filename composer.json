@@ -3,8 +3,7 @@
     "description": "B2B Users and Roles extension for Bagisto",
     "type": "library",
     "require": {
-        "php": "^8.2",
-        "bagisto/bagisto": "^2.3.0"
+        "php": "^8.2"
     },
     "autoload": {
         "psr-4": {
