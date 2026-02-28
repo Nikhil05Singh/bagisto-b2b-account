@@ -1,0 +1,1 @@
+<x-shop::layouts.account><x-slot:title>Create</x-slot><h2>Create Form</h2></x-shop::layouts.account>
