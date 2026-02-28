@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-        // Only create the table if it does not already exist
+        // 1. Create company_roles if it doesn't exist
         if (!Schema::hasTable('company_roles')) {
             Schema::create('company_roles', function (Blueprint $table) {
                 $table->increments('id');
@@ -20,26 +20,37 @@ return new class extends Migration {
                 $table->timestamps();
             });
         }
-        
-        // Only add the columns to the customers table if they are missing
-        if (!Schema::hasColumn('customers', 'company_role_id')) {
-            Schema::table('customers', function (Blueprint $table) {
+
+        // 2. Add columns to customers individually
+        Schema::table('customers', function (Blueprint $table) {
+            if (!Schema::hasColumn('customers', 'type')) {
                 $table->string('type')->default('customer');
+            }
+            if (!Schema::hasColumn('customers', 'is_suspended')) {
                 $table->boolean('is_suspended')->default(0);
+            }
+            if (!Schema::hasColumn('customers', 'company_role_id')) {
                 $table->integer('company_role_id')->unsigned()->nullable();
                 $table->foreign('company_role_id')->references('id')->on('company_roles')->onDelete('set null');
-            });
-        }
+            }
+        });
     }
 
     public function down()
     {
-        if (Schema::hasColumn('customers', 'company_role_id')) {
-            Schema::table('customers', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table) {
+            if (Schema::hasColumn('customers', 'company_role_id')) {
                 $table->dropForeign(['company_role_id']);
-                $table->dropColumn(['type', 'is_suspended', 'company_role_id']);
-            });
-        }
+                $table->dropColumn('company_role_id');
+            }
+            if (Schema::hasColumn('customers', 'type')) {
+                $table->dropColumn('type');
+            }
+            if (Schema::hasColumn('customers', 'is_suspended')) {
+                $table->dropColumn('is_suspended');
+            }
+        });
+        
         Schema::dropIfExists('company_roles');
     }
 };
