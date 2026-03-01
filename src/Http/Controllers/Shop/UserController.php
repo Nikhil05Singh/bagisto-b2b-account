@@ -30,7 +30,6 @@ class UserController extends Controller
         return view('b2baccount::shop.users.create', compact('roles'));
     }
 
-    // This method catches the form data and saves the user
     public function store(Request $request)
     {
         $request->validate([
@@ -42,19 +41,25 @@ class UserController extends Controller
             'company_role_id' => 'required',
         ]);
 
-        $data = $request->only(['first_name', 'last_name', 'email', 'phone', 'gender', 'company_role_id']);
+        // 1. Only grab the standard Bagisto fields first to bypass mass-assignment protection
+        $data = $request->only(['first_name', 'last_name', 'email', 'phone', 'gender']);
         
         // Auto-generate a secure background password
         $data['password'] = bcrypt(rand(100000, 99999999));
-        $data['status'] = $request->has('status') ? 1 : 0;
-        $data['is_suspended'] = 0;
-        $data['type'] = 'user';
         
         // Assign to default customer group (usually ID 2)
         $data['customer_group_id'] = 2; 
         $data['channel_id'] = core()->getCurrentChannel()->id;
 
-        $this->customerRepository->create($data);
+        // 2. Create the base customer
+        $customer = $this->customerRepository->create($data);
+
+        // 3. FORCE update the custom B2B columns so Laravel saves them to the database
+        $customer->type = 'user';
+        $customer->company_role_id = $request->input('company_role_id');
+        $customer->status = $request->has('status') ? 1 : 0;
+        $customer->is_suspended = 0;
+        $customer->save();
 
         session()->flash('success', 'User successfully created!');
         return redirect()->route('b2baccount.users.index');
