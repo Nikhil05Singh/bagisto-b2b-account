@@ -4,7 +4,7 @@
 ![PHP Version](https://img.shields.io/badge/PHP-%5E8.2-777BB4?style=flat-square&logo=php)
 
 ## 📖 Introduction
-The **Bagisto Users & Roles Module** transforms a standard Bagisto B2C storefront into a powerful platform. It allows registered business customers to create sub-users (employees/staff) within their account and assign them highly specific roles and permissions using a dynamic, nested access-control tree.
+The **Bagisto Users & Roles Module** transforms a standard Bagisto storefront into a powerful platform. It allows registered business customers to create sub-users (employees/staff) within their account and assign them highly specific roles and permissions using a dynamic, nested access-control tree.
 
 This module is built entirely decoupled from the Bagisto core, ensuring safe upgrades and maintaining the modern Tailwind CSS aesthetic of Bagisto 2.x.
 
